@@ -2,14 +2,21 @@ import { useEffect, useState } from "react";
 import styles from "./toDoList.module.css";
 
 export const ToDoList = () => {
-  const [value, setValue] = useState<any>("");
-  const [isValue, setIsValue] = useState<any>([]);
+  const [value, setValue] = useState("");
+  const [isValue, setIsValue] = useState(() => {
+    const storedValue = JSON.parse(localStorage.getItem("isValue") || "[]");
+    return storedValue;
+  });
 
-  const handleSubmit = (e: any) => {
+  const handleSubmit = (e:any) => {
     e.preventDefault();
-    setIsValue((prevState: any) => [...prevState, value]);
+    setIsValue((prevState:any) => [...prevState, value]);
     setValue("");
-    console.log("...", isValue);
+  };
+
+  const handleDelete = (index:any) => {
+    const updatedValues = isValue.filter((_:any, i:any) => i !== index);
+    setIsValue(updatedValues);
   };
 
   useEffect(() => {
@@ -33,8 +40,11 @@ export const ToDoList = () => {
         </form>
       </div>
       <ul>
-        {isValue.map((item: any, index: any) => (
-          <li key={index}>{item}</li>
+        {isValue.map((item:any, index:any) => (
+          <li key={index}>
+            {item}
+            <button onClick={() => handleDelete(index)}>Delete</button>
+          </li>
         ))}
       </ul>
     </>
